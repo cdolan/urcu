@@ -1,5 +1,5 @@
 use crate::rcu::callback::{RcuCallFn, RcuDeferFn};
-use crate::rcu::{RcuContext, RcuReadContext};
+use crate::rcu::{RcuContext, RcuDeferContext, RcuReadContext};
 
 /// This trait defines a RCU reference that can be owned after a RCU grace period.
 ///
@@ -71,7 +71,7 @@ pub unsafe trait RcuRef<C> {
     fn defer_cleanup(self, context: &mut C)
     where
         Self: Sized,
-        C: RcuContext,
+        C: RcuDeferContext,
     {
         context.rcu_defer(RcuDeferFn::<_, C>::new(move || {
             // SAFETY: The caller already executed a RCU syncronization.
